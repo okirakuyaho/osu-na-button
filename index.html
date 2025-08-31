@@ -125,17 +125,17 @@
       let id = localStorage.getItem(KEY);
       if (!id){ id = genVisitorId(); localStorage.setItem(KEY, id); }
       return id;
-    };
+    <script>
+// …前略（既存の変数・関数はそのまま）…
 
-    const api = async (action, payload={}) => {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json' },
-        body: JSON.stringify({ action, ...payload })
-      });
-      return res.json();
-    };
-
+// ★ここを置き換え
+const api = async (action, payload = {}) => {
+  const qs = new URLSearchParams({ action, ...payload });
+  const url = `${API_URL}?${qs.toString()}`;
+  const res = await fetch(url, { method: 'GET', cache: 'no-store' });
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json();
+};
     const refresh = async () => {
       const data = await api('getData');
       if (!data.ok) return;
